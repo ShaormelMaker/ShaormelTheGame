@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Joc</title>
+  <style>
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="turnStatus">Randul lui Cristi</h1>
+  <div class="player1">
+    <h2>Cristi</h2>
+    <div class="status">Viata: <span id="player1Health">200</span> | Stamina: <span id="player1Stamina">150</span></div>
+    <div class="actions">
+      <button onclick="useAbility('Bomba Sour', 90)">Bomba Sour</button>
+      <button onclick="useAbility('Bomba Tropicala', 110)">Bomba Tropicala</button>
+      <button onclick="useAbility('Zeul sigma', 70)">Zeul sigma</button>
+      <button onclick="useAbility('Muntele', 50)">Muntele</button>
+      <button onclick="useAbility('Zidul', 40)">Zidul</button>
+      <button onclick="useAbility('Scutul energetic', 30)">Scutul energetic</button>
+      <button onclick="useItem('Shaorma')">Shaorma</button>
+      <button onclick="useItem('Tymbark')">Tymbark</button>
+      <button onclick="skipTurn(1)">Skip Rand</button>
+    </div>
+  </div>
+  <div class="player2 hidden">
+    <h2>Raul</h2>
+    <div class="status">Viata: <span id="player2Health">200</span> | Stamina: <span id="player2Stamina">150</span></div>
+    <div class="actions">
+      <button onclick="useAbility('Shaorma fara lipie', 50)">Shaorma fara lipie</button>
+      <button onclick="useAbility('Clona Universala (Saltul Inazuma)', 60)">Clona Universala (Saltul Inazuma)</button>
+      <button onclick="useAbility('Clona Universala (FatChad)', 120)">Clona Universala (FatChad)</button>
+      <button onclick="useAbility('Apararea din Baneasa', 80)">Apararea din Baneasa</button>
+      <button onclick="useAbility('Zeul sigma', 70)">Zeul sigma</button>
+      <button onclick="useAbility('Scutul energetic', 30)">Scutul energetic</button>
+      <button onclick="useItem('Shaorma')">Shaorma</button>
+      <button onclick="useItem('Tymbark')">Tymbark</button>
+      <button onclick="skipTurn(2)">Skip Rand</button>
+    </div>
+  </div>
+
+  <script>
+    let currentPlayer = 1;
+    let player1Health = 200;
+    let player1Stamina = 150;
+    let player2Health = 200;
+    let player2Stamina = 150;
+
+    function useAbility(ability, staminaCost) {
+      if (currentPlayer === 1 && player1Stamina >= staminaCost) {
+        player1Stamina -= staminaCost;
+        player2Health -= staminaCost;
+      } else if (currentPlayer === 2 && player2Stamina >= staminaCost) {
+        player2Stamina -= staminaCost;
+        player1Health -= staminaCost;
+      } else {
+        alert("Nu ai suficientă stamina pentru a utiliza această abilitate!");
+        return;
+      }
+
+      checkGameStatus();
+      currentPlayer = currentPlayer === 1 ? 2 : 1;
+      updateGameStatus();
+    }
+
+    function useItem(item) {
+      if (item === 'Shaorma') {
+        if (currentPlayer === 1 && player1Stamina < 200) {
+          player1Stamina += 30;
+          if (player1Stamina > 200) {
+            player1Stamina = 200;
+          }
+        } else if (currentPlayer === 2 && player2Stamina < 200) {
+          player2Stamina += 30;
+          if (player2Stamina > 200) {
+            player2Stamina = 200;
+          }
+        }
+      } else if (item === 'Tymbark') {
+        if (currentPlayer === 1 && player1Stamina < 200) {
+          player1Stamina += 30;
+          if (player1Stamina > 200) {
+            player1Stamina = 200;
+          }
+        } else if (currentPlayer === 2 && player2Stamina < 200) {
+          player2Stamina += 30;
+          if (player2Stamina > 200) {
+            player2Stamina = 200;
+          }
+        }
+      }
+
+      checkGameStatus();
+      currentPlayer = currentPlayer === 1 ? 2 : 1;
+      updateGameStatus();
+    }
+
+    function skipTurn(player) {
+      if (player === 1) {
+        currentPlayer = 2;
+        player1Stamina += 40;
+        player1Health += 20;
+        if (player1Stamina > 200) {
+          player1Stamina = 200;
+        }
+        if (player1Health > 200) {
+          player1Health = 200;
+        }
+      } else if (player === 2) {
+        currentPlayer = 1;
+        player2Stamina += 20;
+        player2Health += 10;
+        if (player2Stamina > 200) {
+          player2Stamina = 200;
+        }
+        if (player2Health > 200) {
+          player2Health = 200;
+        }
+      }
+
+      checkGameStatus();
+      updateGameStatus();
+    }
+
+    function checkGameStatus() {
+      if (player1Health <= 0) {
+        alert("Cristi a pierdut! Raul a castigat!");
+        resetGame();
+      } else if (player2Health <= 0) {
+        alert("Raul a pierdut! Cristi a castigat!");
+        resetGame();
+      }
+    }
+
+    function resetGame() {
+      currentPlayer = 1;
+      player1Health = 200;
+      player1Stamina = 150;
+      player2Health = 200;
+      player2Stamina = 150;
+      updateGameStatus();
+    }
+
+    function updateGameStatus() {
+      const player1 = document.querySelector('.player1');
+      const player2 = document.querySelector('.player2');
+
+      if (currentPlayer === 1) {
+        player1.classList.remove('hidden');
+        player2.classList.add('hidden');
+      } else if (currentPlayer === 2) {
+        player1.classList.add('hidden');
+        player2.classList.remove('hidden');
+      }
+
+      document.getElementById("turnStatus").innerText = "Randul lui " + (currentPlayer === 1 ? "Cristi" : "Raul");
+      document.getElementById("player1Health").innerText = currentPlayer === 1 ? player1Health : '';
+      document.getElementById("player1Stamina").innerText = currentPlayer === 1 ? player1Stamina : '';
+      document.getElementById("player2Health").innerText = currentPlayer === 2 ? player2Health : '';
+      document.getElementById("player2Stamina").innerText = currentPlayer === 2 ? player2Stamina : '';
+    }
+  </script>
+</body>
+</html>
